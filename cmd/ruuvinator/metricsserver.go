@@ -64,8 +64,6 @@ func metricsServer(conf ruuvinatortypes.SqsOutputConfig) error {
 			// TODO: retry?
 			log.Error(err.Error())
 		}
-
-		time.Sleep(1 * time.Second)
 	}
 }
 
