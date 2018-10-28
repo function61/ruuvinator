@@ -41,6 +41,13 @@ Configure `config.json`. Example with SQS:
 }
 ```
 
+Don't worry if you don't know your sensors' Bluetooth addresses. For non-whitelisted Ruuvis,
+you can find log lines like these:
+
+```
+observation from unknown Ruuvi fb:72:36:09:90:15
+```
+
 Example config with just printing to console:
 
 ```
@@ -58,13 +65,18 @@ Now try running it (you might need to run it with sudo):
 $ ./ruuvinator client
 ```
 
-To make it start on system startup:
+To make it start on system startup - you'll get nice help tips as well:
 
 ```
 $ ./ruuvinator client write-systemd-unit-file
+Wrote unit file to /etc/systemd/system/ruuvinator-client.service
+Run to enable on boot & to start now:
+	$ systemctl enable ruuvinator-client
+	$ systemctl start ruuvinator-client
 ```
 
-Troubleshooting: if Bluetooth gives you grief, did you try turning it off and back on again?
+Troubleshooting: if Bluetooth gives you grief,
+[have you tried turning it off and on again](https://youtu.be/nn2FB1P_Mn8?t=10)?
 
 ```
 $ hciconfig hci0 down && hciconfig hci0 up

@@ -60,7 +60,7 @@ func client() error {
 
 		resolvedObservation, ok := sensorResolver.Resolve(*observation)
 		if !ok {
-			log.Info(fmt.Sprintf("unknown Ruuvi traffic from %s", observation.SensorAddr))
+			log.Info(fmt.Sprintf("observation from unknown Ruuvi %s", observation.SensorAddr))
 			return
 		}
 
