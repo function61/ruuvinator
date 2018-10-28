@@ -18,6 +18,13 @@ The client tries its best to send observations in one-second batches so one clie
 do much more than 86 400 requests to SQS a day even if you have more trackers than three.
 
 
+How to build & develop
+----------------------
+
+[How to build & develop](https://github.com/function61/turbobob/blob/master/docs/external-how-to-build-and-dev.md)
+(with Turbo Bob, our build tool). It's easy and simple!
+
+
 Usage, client
 -------------
 
