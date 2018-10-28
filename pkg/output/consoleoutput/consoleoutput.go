@@ -28,5 +28,4 @@ func New() *output {
 	return &output{
 		ch: ch,
 	}
-
 }
