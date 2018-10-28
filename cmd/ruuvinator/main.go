@@ -15,7 +15,7 @@ func main() {
 		Version: version,
 	}
 
-	app.AddCommand(btListenerEntry())
+	app.AddCommand(clientEntry())
 	app.AddCommand(metricsServerEntry())
 
 	if err := app.Execute(); err != nil {
