@@ -7,6 +7,7 @@ import (
 	"github.com/function61/gokit/stopper"
 	"os"
 	"os/exec"
+	"time"
 )
 
 type Frame struct {
@@ -39,10 +40,20 @@ func leScanner(ctx context.Context, stop *stopper.Stopper) {
 	log.Info("starting")
 	defer log.Info("stopped")
 
-	leScan := exec.CommandContext(ctx, "hcitool", "lescan", "--duplicates", "--passive")
-	leScan.Stderr = os.Stderr
-	if err := leScan.Run(); err != nil {
-		log.Error(err.Error())
+	for {
+		leScan := exec.CommandContext(ctx, "hcitool", "lescan", "--duplicates", "--passive")
+		leScan.Stderr = os.Stderr
+
+		exitError := leScan.Run()
+
+		select {
+		case <-ctx.Done(): // exited due to context cancel?
+			return
+		default:
+		}
+
+		log.Error(fmt.Sprintf("restarting due to unexpected exit: %s", exitError.Error()))
+		time.Sleep(3 * time.Second)
 	}
 }
 
