@@ -6,6 +6,7 @@ import (
 	"github.com/function61/gokit/envvar"
 	"github.com/function61/gokit/logger"
 	"github.com/function61/ruuvinator/pkg/ruuvinatortypes"
+	"github.com/function61/ruuvinator/pkg/sqsfacade"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/cobra"
@@ -26,10 +27,13 @@ func metricsServer(conf ruuvinatortypes.SqsOutputConfig) error {
 		log.Error(http.ListenAndServe(":80", nil).Error())
 	}()
 
-	sqsFacade := NewSQS(conf.QueueUrl, conf.AwsAccessKeyId, conf.AwsAccessKeySecret)
+	sqsClient := sqsfacade.New(
+		conf.QueueUrl,
+		conf.AwsAccessKeyId,
+		conf.AwsAccessKeySecret)
 
 	for {
-		received, err := sqsFacade.Receive()
+		received, err := sqsClient.Receive()
 		if err != nil {
 			log.Error(err.Error())
 			time.Sleep(1 * time.Second) // prevent hot loop
@@ -60,7 +64,7 @@ func metricsServer(conf ruuvinatortypes.SqsOutputConfig) error {
 				measurements.Acceleration.Z))
 		}
 
-		if err := sqsFacade.AckReceived(received); err != nil {
+		if err := sqsClient.AckReceived(received); err != nil {
 			// TODO: retry?
 			log.Error(err.Error())
 		}

@@ -1,6 +1,7 @@
-package main
+package sqsfacade
 
 import (
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
@@ -8,8 +9,24 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
 
-// AWS SQS requires too much boilerplate that you can get wrong. therefore I had to
-// build an abstraction
+// AWS SQS requires too much boilerplate that you can get wrong, for simple things.
+// therefore I had to build a facade to hide this misery
+
+func New(queueUrl string, accessKeyId string, accessKeySecret string) *sqsFacade {
+	sess := session.Must(session.NewSession())
+
+	return &sqsFacade{
+		queueUrl: queueUrl,
+		client: sqs.New(sess, &aws.Config{
+			Region: aws.String(endpoints.UsEast1RegionID),
+			Credentials: credentials.NewStaticCredentials(
+				accessKeyId,
+				accessKeySecret,
+				""),
+		}),
+	}
+}
+
 type sqsFacade struct {
 	queueUrl string
 	client   *sqs.SQS
@@ -39,25 +56,18 @@ func (a *sqsFacade) AckReceived(receiveOutput *sqs.ReceiveMessageOutput) error {
 		return nil
 	}
 
-	_, err := a.client.DeleteMessageBatch(&sqs.DeleteMessageBatchInput{
+	// TODO: retry failed
+	response, err := a.client.DeleteMessageBatch(&sqs.DeleteMessageBatchInput{
 		Entries:  ackList,
 		QueueUrl: &a.queueUrl,
 	})
-
-	return err
-}
-
-func NewSQS(queueUrl string, accessKeyId string, accessKeySecret string) *sqsFacade {
-	sess := session.Must(session.NewSession())
-
-	return &sqsFacade{
-		queueUrl: queueUrl,
-		client: sqs.New(sess, &aws.Config{
-			Region: aws.String(endpoints.UsEast1RegionID),
-			Credentials: credentials.NewStaticCredentials(
-				accessKeyId,
-				accessKeySecret,
-				""),
-		}),
+	if err != nil {
+		return err
 	}
+
+	if len(response.Failed) > 0 {
+		return fmt.Errorf("DeleteMessageBatch() failed for %d/%d entries", len(response.Failed), len(ackList))
+	}
+
+	return nil
 }
