@@ -49,13 +49,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:762666a1e2e67e033fc2e4b09b2eb527daf163e154cfac07528767939c0aad94"
+  digest = "1:e1f414cf3621686421ad2b97a276724e502bd57a418532f6fb4d34dc6cf5c867"
   name = "github.com/function61/gokit"
   packages = [
     "assert",
+    "backoff",
     "envvar",
     "logger",
     "ossignal",
+    "retry",
     "stopper",
     "systemdinstaller",
   ]
@@ -167,6 +169,7 @@
     "github.com/function61/gokit/envvar",
     "github.com/function61/gokit/logger",
     "github.com/function61/gokit/ossignal",
+    "github.com/function61/gokit/retry",
     "github.com/function61/gokit/stopper",
     "github.com/function61/gokit/systemdinstaller",
     "github.com/prometheus/client_golang/prometheus",
