@@ -90,7 +90,7 @@ func (o *output) processor(ctx context.Context) {
 func New(ctx context.Context, config ruuvinatortypes.SqsOutputConfig) *output {
 	out := &output{
 		config:       config,
-		observations: make(chan ruuvinatortypes.ResolvedSensorObservation, 16),
+		observations: make(chan ruuvinatortypes.ResolvedSensorObservation, 32),
 	}
 
 	go out.processor(ctx)
