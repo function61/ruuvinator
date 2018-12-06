@@ -41,27 +41,29 @@ func metricsServer(conf ruuvinatortypes.SqsOutputConfig) error {
 		}
 
 		for _, item := range received.Messages {
-			msg := &ruuvinatortypes.ResolvedSensorObservation{}
-			if err := json.Unmarshal([]byte(*item.Body), msg); err != nil {
+			observations := []ruuvinatortypes.ResolvedSensorObservation{}
+			if err := json.Unmarshal([]byte(*item.Body), &observations); err != nil {
 				// TODO: do not ack this, but let it error so long that it goes in the DLQ
 				log.Error(fmt.Sprintf("error processing %s", *item.Body))
 				continue
 			}
 
-			sensorLabels := prometheus.Labels{
-				"sensor": msg.Observation.SensorAddr,
-				"name":   msg.SensorName,
+			for _, observation := range observations {
+				sensorLabels := prometheus.Labels{
+					"sensor": observation.Observation.SensorAddr,
+					"name":   observation.SensorName,
+				}
+
+				measurements := observation.Observation.Measurements // shorthand
+
+				temperature.With(sensorLabels).Set(measurements.Temperature)
+				humidity.With(sensorLabels).Set(measurements.Humidity)
+				battery.With(sensorLabels).Set(measurements.Battery)
+				pressure.With(sensorLabels).Set(float64(measurements.Pressure))
+				accelerationSum.With(sensorLabels).Set(float64(measurements.Acceleration.X +
+					measurements.Acceleration.Y +
+					measurements.Acceleration.Z))
 			}
-
-			measurements := msg.Observation.Measurements // shorthand
-
-			temperature.With(sensorLabels).Set(measurements.Temperature)
-			humidity.With(sensorLabels).Set(measurements.Humidity)
-			battery.With(sensorLabels).Set(measurements.Battery)
-			pressure.With(sensorLabels).Set(float64(measurements.Pressure))
-			accelerationSum.With(sensorLabels).Set(float64(measurements.Acceleration.X +
-				measurements.Acceleration.Y +
-				measurements.Acceleration.Z))
 		}
 
 		if err := sqsClient.AckReceived(received); err != nil {
