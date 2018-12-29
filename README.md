@@ -28,6 +28,8 @@ How to build & develop
 Usage, client
 -------------
 
+Prerequisites: `$ apt install bluez-hcidump`.
+
 Download suitable binary for your architecture from Bintray download link from the top of
 this README.
 
