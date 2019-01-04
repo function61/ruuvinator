@@ -61,8 +61,8 @@ func (o *output) processor(ctx context.Context) {
 				sqsfacade.ToSimpleQueueEntry(string(observationsAsJson), 0),
 			}
 
-			// try to limit sending to one msg/second to cheap out on AWS bills
-			nextPossibleQueueSubmit := time.Now().Add(1 * time.Second)
+			// try to limit sending to one msg/2 seconds to cheap out on AWS bills
+			nextPossibleQueueSubmit := time.Now().Add(2 * time.Second)
 
 			failed := func(err error) {
 				log.Error(fmt.Sprintf("Send: %s", err.Error()))
