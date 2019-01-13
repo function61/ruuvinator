@@ -14,8 +14,10 @@ The client has pluggable outputs:
 - Print to console (doesn't need the server component at all)
 - AWS SQS
 
-The client tries its best to send observations in one-second batches so one client shouldn't
-do much more than 86 400 requests to SQS a day even if you have more trackers than three.
+The client tries its best to send observations in two-second batches to minimize AWS
+service charges.
+
+![](docs/graphs.png)
 
 
 How to build & develop
