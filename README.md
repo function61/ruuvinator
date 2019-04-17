@@ -1,5 +1,5 @@
 [![Build Status](https://img.shields.io/travis/function61/ruuvinator.svg?style=for-the-badge)](https://travis-ci.org/function61/ruuvinator)
-[![Download](https://img.shields.io/bintray/v/function61/ruuvinator/main.svg?style=for-the-badge&label=Download)](https://bintray.com/function61/ruuvinator/main/_latestVersion#files)
+[![Download](https://img.shields.io/bintray/v/function61/dl/ruuvinator.svg?style=for-the-badge&label=Download)](https://bintray.com/function61/dl/ruuvinator/_latestVersion#files)
 [![Download](https://img.shields.io/docker/pulls/fn61/ruuvinator.svg?style=for-the-badge)](https://hub.docker.com/r/fn61/ruuvinator/)
 
 [Ruuvitag](https://shop.ruuvi.com/product/ruuvitag/) Bluetooth listener ("client") &
